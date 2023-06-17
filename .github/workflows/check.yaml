@@ -1,0 +1,18 @@
+name: check
+run-name: Lint and Type Check
+on:
+  push:
+    branches:
+      - dev
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      - name: Lint
+        run: deno task lint
+      - name: Type Check
+        run: deno task check
