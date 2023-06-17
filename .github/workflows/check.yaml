@@ -5,7 +5,7 @@ on:
     branches:
       - dev
 jobs:
-  setup:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -14,7 +14,5 @@ jobs:
           deno-version: v1.x
       - name: Lint
         run: deno task lint
-      - name: Install vue-tsc
-        run: npm i vue-tsc --no-save
       - name: Type Check
         run: deno task check
