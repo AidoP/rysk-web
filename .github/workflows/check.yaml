@@ -12,16 +12,8 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-  lint:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
       - name: Lint
         run: deno task lint
-  check:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
       - name: Install vue-tsc
         run: npm i vue-tsc --no-save
       - name: Type Check
