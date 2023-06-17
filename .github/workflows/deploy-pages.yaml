@@ -1,0 +1,24 @@
+name: deploy-pages
+run-name: Deploy to Pages
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      - name: Install wasm-pack
+        run: yarn global add wasm-pack
+      - name: Install vue-tsc
+        run: npm i vue-tsc --no-save
+      - name: Lint
+        run: deno task lint
+      - name: Type Check
+        run: deno task check
+      - name: Build
+        run: deno task build
+      - uses: actions/upload-pages-artifact@v1.0.9
+        with:
+          path: target/dist

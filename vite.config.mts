@@ -9,11 +9,6 @@ export default defineConfig({
     plugins: [wasm(), vue()],
     build: {
         target: 'esnext',
-        outDir: 'target/dist',
-        rollupOptions: {
-            external: [
-                'rysk_web.js'
-            ]
-        }
+        outDir: 'target/dist'
     }
 })

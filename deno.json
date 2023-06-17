@@ -5,6 +5,8 @@
         "vue-dev": "deno run -A --node-modules-dir npm:vite",
         "build": "deno task wasm; deno run -A --node-modules-dir npm:vite build",
         "preview": "deno task wasm; deno run -A --node-modules-dir npm:vite preview",
-        "serve": "deno task wasm; deno run --allow-net --allow-read https://deno.land/std@0.157.0/http/file_server.ts target/dist/"
+        "serve": "deno task wasm; deno run --allow-net --allow-read https://deno.land/std@0.157.0/http/file_server.ts target/dist/",
+        "check": "deno run --allow-read npm:vue-tsc --noEmit",
+        "lint": "deno lint src/ --ignore=src/rysk_web/"
     }
 }

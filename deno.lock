@@ -3,6 +3,7 @@
   "remote": {},
   "npm": {
     "specifiers": {
+      "@fontsource/noto-sans": "@fontsource/noto-sans@5.0.3",
       "@vitejs/plugin-vue@^4.2.3": "@vitejs/plugin-vue@4.2.3_vite@4.3.9_vue@3.3.4",
       "vite": "vite@4.3.9",
       "vite-plugin-wasm@^3.2.2": "vite-plugin-wasm@3.2.2_vite@4.3.9",
@@ -100,6 +101,10 @@
       },
       "@esbuild/win32-x64@0.17.19": {
         "integrity": "sha512-lAhycmKnVOuRYNtRtatQR1LPQf2oYCkRGkSFnseDAKPl8lu5SOsK/e1sXe5a0Pc5kHIHe6P2I/ilntNv2xf3cA==",
+        "dependencies": {}
+      },
+      "@fontsource/noto-sans@5.0.3": {
+        "integrity": "sha512-x6M139l0kSik4GcIquZk30yj6fjwBRzqdjcnqSAwCJ0AGk32TqZd1OysHrew31IzHUxUmPoq3YByO+4pDPRBxg==",
         "dependencies": {}
       },
       "@jridgewell/sourcemap-codec@1.4.15": {
