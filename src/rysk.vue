@@ -1,21 +1,24 @@
 <script setup lang="ts">
-    import { ref } from 'vue'
-    import * as rysk_web from './rysk_web'
+    import { ref } from 'vue';
+    import { useStore } from '@nanostores/vue';
 
-    const instruction = ref('invalid opcode');
-    function inspect(raw: string): string {
-        const i = Number.parseInt(raw, 16);
-        if (i) {
-            return rysk_web.inspect(i);
-        } else {
-            return 'invalid opcode';
-        }
-    }
+    import { $vm } from '@store/vm';
+    const vm = useStore($vm);
+
+    const val = ref('');
+
+    import disasm from '@panel/disasm.vue';
+    import mem from '@panel/mem.vue';
 </script>
 
 <template>
-    <input class="" @input="event => instruction = inspect(event.target?.value)" type="text">
-    <code>{{ instruction }}</code>
+    <header>
+    </header>
+    <body>
+        <mem />
+    </body>
+    <footer>
+    </footer>
 </template>
 
 <style scoped>
