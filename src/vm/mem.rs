@@ -1,3 +1,4 @@
+#![allow(unused)]
 use crate::types::{Addressable, Cause};
 use super::RegionRef;
 

@@ -1,3 +1,4 @@
+#![allow(unused)]
 use crate::types::Cause;
 
 use super::{mem::Memory, RegionRef};

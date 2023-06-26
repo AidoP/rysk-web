@@ -82,10 +82,10 @@ impl Serialize for RegionRef {
         where
             S: serde::Serializer {
         let mut state = serializer.serialize_struct("RegionRef", 4)?;
-        state.serialize_field("ty", &self.ty);
-        state.serialize_field("address", &self.address);
-        state.serialize_field("ptr", &(self.ptr as usize));
-        state.serialize_field("len", &self.len);
+        state.serialize_field("ty", &self.ty)?;
+        state.serialize_field("address", &self.address)?;
+        state.serialize_field("ptr", &(self.ptr as usize))?;
+        state.serialize_field("len", &self.len)?;
         state.end()
     }
 }

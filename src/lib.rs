@@ -1,3 +1,5 @@
+#![allow(clippy::assertions_on_constants)]
+
 use std::ops::{Deref, DerefMut};
 use wasm_bindgen::prelude::*;
 use rysk::Hart;
