@@ -1,21 +1,25 @@
 #![allow(unused)]
-use crate::types::Cause;
-
 use super::{mem::Memory, RegionRef};
 
+use crate::types::Cause;
+
 pub struct Bus {
-    dram: Memory
+    dram: Memory,
 }
 impl Bus {
     pub fn new(pages: u32) -> Self {
         Self {
-            dram: Memory::new(pages)
+            dram: Memory::new(pages),
         }
     }
     pub fn regions(&mut self) -> Vec<RegionRef> {
-        vec![
-            self.dram.as_region(Self::DRAM_START)
-        ]
+        vec![self.dram.as_region(Self::DRAM_START)]
+    }
+    pub fn memory(&mut self, address: u32) -> RegionRef {
+        match address {
+            Self::DRAM_START..=Self::DRAM_END => self.dram.as_region(Self::DRAM_START),
+            _ => RegionRef::none(address, 0),
+        }
     }
 
     pub const BEFORE_DRAM_END: u32 = Self::DRAM_START - 1;
@@ -42,7 +46,12 @@ impl rysk::Addressable<u32> for Bus {
     }
 
     fn write_u8(&self, address: u32, byte: u8) -> Result<(), Cause> {
-        todo!()
+        match address {
+            Self::DRAM_START..=Self::DRAM_END => {
+                self.dram.write_u8(address - Self::DRAM_START, byte)
+            }
+            _ => Err(Cause::STORE_FAULT),
+        }
     }
 
     fn write_u16(&self, address: u32, halfword: u16) -> Result<(), Cause> {

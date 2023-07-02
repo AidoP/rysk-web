@@ -1,21 +1,28 @@
 {
     "compilerOptions": {
-        "target": "esnext",
+        "target": "ESNext",
         "useDefineForClassFields": true,
-        "module": "esnext",
-        "moduleResolution": "node",
-        "strict": true,
-        "jsx": "preserve",
-        "sourceMap": true,
+        "module": "ESNext",
+        "lib": ["ESNext", "DOM", "DOM.Iterable"],
+        "skipLibCheck": true,
+
+        // Bundler Mode
+        "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
         "resolveJsonModule": true,
-        "esModuleInterop": true,
-        "lib": ["esnext", "dom"],
+        "isolatedModules": true,
+        "noEmit": true,
+        "jsx": "preserve",
+
+        // Linting
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
         "paths": {
-            "@src/*": ["./src/*"],
-            "@store/*": ["./src/store/*"],
-            "@c/*": ["./src/components/*"],
-            "@panel/*": ["./src/component/panel/*"]
+            "@/*": ["./src/*"]
         }
     },
-    "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
+    "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+    "references": [{ "path": "./tsconfig.node.json" }]
 }

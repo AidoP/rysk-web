@@ -1,11 +1,13 @@
 #![allow(clippy::assertions_on_constants)]
 
+use rysk::{Addressable, Hart};
 use std::ops::{Deref, DerefMut};
 use wasm_bindgen::prelude::*;
-use rysk::Hart;
+
+mod component;
 
 mod vm;
-use vm::{RegionRef, Vm, VmArgsType};
+use vm::{JsRegionRef, JsVmArgs, RegionRef, Vm};
 
 pub mod types {
     pub use rysk::Addressable;
@@ -17,12 +19,27 @@ pub struct RyskVm(*mut Vm);
 #[wasm_bindgen]
 impl RyskVm {
     #[wasm_bindgen(constructor)]
-    pub fn new(args: VmArgsType) -> Result<RyskVm, JsValue> {
+    pub fn new(args: JsVmArgs) -> Result<RyskVm, JsValue> {
         let args = serde_wasm_bindgen::from_value(args.into())?;
         Ok(Self(Box::into_raw(Vm::new(&args))))
     }
-    pub fn regions(&mut self) -> Vec<JsValue> {
-        self.hart.bus().regions().iter().map(RegionRef::to_js).collect()
+    pub fn regions(&mut self) -> Vec<JsRegionRef> {
+        self.hart
+            .bus()
+            .regions()
+            .iter()
+            .map(|v| RegionRef::to_js(v).into())
+            .collect()
+    }
+    pub fn get_memory(&mut self, address: u32) -> JsRegionRef {
+        self.hart.bus().memory(address).to_js().into()
+    }
+    pub fn set_memory(&mut self, address: u32, data: &[u8]) {
+        for (i, byte) in data.iter().enumerate() {
+            if self.hart.bus().write_u8(address + i as u32, *byte).is_err() {
+                gloo_console::log!("Write fault");
+            }
+        }
     }
 }
 impl Deref for RyskVm {

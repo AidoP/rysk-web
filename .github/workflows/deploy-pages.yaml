@@ -20,19 +20,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-      - name: Lint
-        run: deno task lint
-      - name: Type Check
-        run: deno task check
-      - name: Build
-        run: deno task build
+      - name: Install Dependencies
+        run: npm install
       - name: Setup Pages
+        id: setup
         uses: actions/configure-pages@v3
+      - name: Build
+        run: npm run build '${{ steps.setup.outputs.base_path }}'
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v1
         with:
