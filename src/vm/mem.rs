@@ -1,42 +1,41 @@
 #![allow(unused)]
-use crate::types::{Addressable, Cause};
 use super::RegionRef;
 
+use crate::types::{Addressable, Cause};
 
 /// Page-aligned fixed-sized dynamically allocated memory.
 pub struct Memory {
     ptr: *mut u8,
-    len: u32
+    len: u32,
 }
 impl Memory {
     const PAGE_SIZE: u32 = 4096;
     pub fn new(pages: u32) -> Self {
         assert!(Self::PAGE_SIZE != 0);
         assert!(Self::PAGE_SIZE.is_power_of_two());
-        
+
         if pages == 0 {
             return Self {
                 ptr: core::ptr::null_mut(),
-                len: 0
-            }
+                len: 0,
+            };
         }
         let len = pages * Self::PAGE_SIZE;
         if usize::try_from(len).unwrap() > isize::MAX as usize {
             panic!("the memory required to allocate {pages} pages overflows isize")
         }
         unsafe {
-            let layout = std::alloc::Layout::from_size_align_unchecked(len as usize, Self::PAGE_SIZE as usize);
+            let layout = std::alloc::Layout::from_size_align_unchecked(
+                len as usize,
+                Self::PAGE_SIZE as usize,
+            );
             let ptr = std::alloc::alloc(layout);
             if ptr.is_null() {
                 std::alloc::handle_alloc_error(layout)
             }
-            for i in 0..len {
-                ptr.add(i as usize).write(i as u8);
-            }
-            Self {
-                ptr,
-                len
-            }
+            const DEFAULT_DATA: &str = "🚀 Blast off!\n🦀 - Hello, Ferris!";
+            ptr.copy_from(DEFAULT_DATA.as_ptr(), DEFAULT_DATA.len());
+            Self { ptr, len }
         }
     }
 
@@ -59,9 +58,9 @@ impl Memory {
     pub fn as_region(&mut self, address: u32) -> RegionRef {
         RegionRef {
             ty: super::RegionType::Dram,
+            ptr: self.as_ptr(),
             address,
-            ptr: self.ptr,
-            len: self.len
+            len: self.len,
         }
     }
 }
@@ -83,7 +82,11 @@ impl Addressable<u32> for Memory {
     }
 
     fn write_u8(&self, address: u32, byte: u8) -> Result<(), Cause> {
-        todo!()
+        if address >= self.len() {
+            return Err(Cause::STORE_FAULT);
+        }
+        unsafe { self.ptr.offset(address as isize).write(byte) }
+        Ok(())
     }
 
     fn write_u16(&self, address: u32, halfword: u16) -> Result<(), Cause> {

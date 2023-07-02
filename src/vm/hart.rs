@@ -1,6 +1,6 @@
+use super::bus::Bus;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::wasm_bindgen;
-use super::bus::Bus;
 
 #[wasm_bindgen(typescript_custom_section)]
 const HART_ARGS_TYPE: &'static str = r#"
@@ -11,18 +11,18 @@ export class HartArgs {
 
 #[derive(Deserialize, Serialize)]
 pub struct HartArgs {
-    pub memory_pages: u32
+    pub memory_pages: u32,
 }
 
 pub struct Hart {
     registers: [u32; 32],
-    bus: Bus
+    bus: Bus,
 }
 impl Hart {
     pub fn new(args: &HartArgs) -> Self {
         Self {
             registers: [0; 32],
-            bus: Bus::new(args.memory_pages)
+            bus: Bus::new(args.memory_pages),
         }
     }
 }

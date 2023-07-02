@@ -1,10 +1,12 @@
-import { atom } from 'nanostores'
-import { RyskVm } from '@src/rysk_web';
+import { atom, WritableAtom } from 'nanostores';
 
-const default_args = {
-    hart: {
-        memory_pages: 1024
-    }
-};
+import { AsyncWorker } from '@/worker/async_worker';
+import { VmMessage, VmMessageInterface } from '@/worker/vm_message';
+import worker from '@/worker/vm?worker&url';
+import { RegionRef } from '@/rysk_web/rysk_web';
 
-export const $vm = atom(new RyskVm(default_args));
+export const $vm = atom(new AsyncWorker<VmMessage, VmMessageInterface>(worker));
+
+export const $regions = atom([] as RegionRef[]);
+export const $memory: WritableAtom<WebAssembly.Memory | undefined> = atom();
+

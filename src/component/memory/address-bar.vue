@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { to_fixed_hex } from "@src/util";
+import { to_hex } from '@/lib/hex';
 
 const props = defineProps<{
     modelValue: number,
@@ -46,7 +46,7 @@ watch(() => props.modelValue, (new_value) => {
 const valid = ref(true);
 const text_value = computed({
     get() {
-        return to_fixed_hex(props.modelValue);
+        return to_hex(props.modelValue, 8);
     },
     set(new_value: string) {
         let is_valid = false;

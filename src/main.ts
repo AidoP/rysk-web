@@ -1,5 +1,5 @@
 import { createApp } from 'vue';
 import './style.css';
-import rysk from './rysk.vue';
+import app from './app.vue';
 
-createApp(rysk).mount('#rysk');
+createApp(app).mount('#app');
