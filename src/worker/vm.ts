@@ -1,4 +1,4 @@
-import { memory } from '@/rysk_web/rysk_web_bg.wasm';
+import { memory as vm_memory } from '@/rysk_web/rysk_web_bg.wasm';
 import { message_processor } from './async_worker';
 import { VmMessage, VmMessageInterface, VmMessageRequest } from './vm_message';
 import { RegionRef, RegionType, RyskVm } from '@/rysk_web';
@@ -10,7 +10,6 @@ const default_args = {
 };
 const vm = new RyskVm(default_args);
 let regions: RegionRef[] = [];
-const vm_memory = new Uint8Array(memory.buffer);
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 onmessage = message_processor<VmMessage, VmMessageInterface>((type, request) => {
@@ -33,7 +32,7 @@ const process_region = (request: { address: number, length: number }, region: Re
     if (region.ty == RegionType.Dram) {
         const mem = vm.get_memory(Math.max(region.address, request.address));
         const len = Math.min(mem.len, request.length - memory.length);
-        return [...memory, ...vm_memory.subarray(mem.ptr, mem.ptr + len)];
+        return [...memory, ...new Uint8Array(vm_memory.buffer).subarray(mem.ptr, mem.ptr + len)];
     } else {
         const len = Math.min(region.len - (request.address - region.address), request.length - memory.length);
         return [...memory, ...new Array(len).fill(undefined)];
