@@ -1,21 +1,16 @@
 @font-face {
     font-family: 'Noto Sans';
-    src: url('static/noto-sans-latin-400-normal.woff2');
+    src: url('/noto-sans-latin-400-normal.woff2');
 }
 @font-face {
     font-family: 'Noto Sans Mono';
-    src: url('static/noto-sans-mono-latin-400-normal.woff2');
+    src: url('/noto-sans-mono-latin-400-normal.woff2');
 }
 
 .code {
     font-family: 'Noto Sans Mono';
 }
-.input {
-    border: 1px solid black;
-    border-radius: 3px;
-    padding: 0.2em;
-}
-input[invalid] {
+input.invalid {
     border-color: red;
     box-shadow: inset 0 0 2px red;
 }

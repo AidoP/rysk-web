@@ -3,84 +3,47 @@ import { computed, ref, watch } from 'vue';
 import { to_hex } from '@/lib/hex';
 
 const props = defineProps<{
-    modelValue: number,
-    max?: number,
-    min?: number,
-    align?: number,
-    cyclic?: boolean,
-    disabled?: boolean
+    value: number
 }>();
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:value']);
+watch(() => props.value, value => {
+    text.value = to_hex(value, 8);
+});
 
-const align = (value: number) => {
-    if (props.align !== undefined) {
-        return ((value >>> props.align) << props.align) >>> 0;
-    } else {
-        return value;
-    }
+const text = ref(to_hex(props.value, 8));
+const is_valid = (value: string) => {
+    return value.length <= 8 && /^[0-9a-fA-F][_0-9a-fA-F]*$/.test(value);
 };
-watch(() => props.modelValue, (new_value) => {
-    const min = props.min ?? 0;
-    if (new_value < min) {
-        // Cycle back to the maximum value
-        if (props.cyclic && props.max !== undefined) {
-            emit('update:modelValue', align(props.max - (min - new_value)));
-        } else {
-            emit('update:modelValue', align(min));
-        }
-    } else if (props.max !== undefined && new_value > props.max) {
-        // Cycle back to the minimum value
-        if (props.cyclic) {
-            emit('update:modelValue', align(min + (new_value - props.max)));
-        } else {
-            emit('update:modelValue', align(props.max));
-        }
-    } else {
-        const v = align(new_value);
-        if (v !== new_value) {
-            emit('update:modelValue', v);
-        }
-    }
-});
-
-const valid = ref(true);
-const text_value = computed({
-    get() {
-        return to_hex(props.modelValue, 8);
-    },
-    set(new_value: string) {
-        let is_valid = false;
-        if (/^[0-9a-fA-F][_0-9a-fA-F]*$/.test(new_value)) {
-            const num = Number.parseInt(new_value.replaceAll('_', ''), 16);
-            is_valid = props.max !== undefined ? num <= props.max : true && num >= (props.min ?? 0);
-            if (is_valid) {
-                emit('update:modelValue', num);
-            }
-        }
-        valid.value = is_valid;
-    }
-});
+const valid = computed(() => is_valid(text.value));
+const on_change = (event: Event) => {
+    const new_value = (event.target as HTMLInputElement).value;
+    if (!is_valid(new_value))
+        return;
+    const num = Number.parseInt(new_value.replaceAll('_', ''), 16);
+    emit('update:value', num);
+    text.value = to_hex(props.value, 8);
+};
 </script>
 
 <template>
-    <span :invalid="valid ? undefined : true" class="input">
+    <span class="input">
         <code class="inner">0x</code>
-        <input class="inner" type="text" :disabled="props?.disabled" :value="text_value" @change="text_value=($event.target as HTMLInputElement).value">
+        <input class="inner" type="text" :class="{ invalid: !valid }" v-model="text" @change="on_change">
     </span>
 </template>
 
 <style scoped>
-span {
-    padding-right: 1.4em;
-}
 input {
     outline: none;
     background: none;
-    margin: -1.4em;
+    margin-left: -1.5em;
     padding-left: 1.4em;
 }
+code {
+    margin-left: 0.4em;
+}
 .inner {
-    border: none;
+    border-radius: 4px;
     font-size: 1em;
     font-family: 'Noto Sans Mono';
 }

@@ -1,5 +1,5 @@
 #![allow(unused)]
-use super::{mem::Memory, RegionRef};
+use super::{mem::Memory, MemoryRef, RegionRef};
 
 use crate::types::Cause;
 
@@ -13,16 +13,21 @@ impl Bus {
         }
     }
     pub fn regions(&mut self) -> Vec<RegionRef> {
-        vec![self.dram.as_region(Self::DRAM_START)]
+        vec![
+            RegionRef::none(0, Self::DRAM_START),
+            self.dram.as_region(Self::DRAM_START),
+            self.dram.as_region_spare(Self::DRAM_START, Self::DRAM_LEN),
+        ]
     }
-    pub fn memory(&mut self, address: u32) -> RegionRef {
+    pub fn memory(&mut self, address: u32) -> MemoryRef {
         match address {
-            Self::DRAM_START..=Self::DRAM_END => self.dram.as_region(Self::DRAM_START),
-            _ => RegionRef::none(address, 0),
+            Self::DRAM_START..=Self::DRAM_END => {
+                self.dram.as_slice()[(address - Self::DRAM_START) as usize..].into()
+            }
+            _ => MemoryRef::null(),
         }
     }
 
-    pub const BEFORE_DRAM_END: u32 = Self::DRAM_START - 1;
     pub const DRAM_START: u32 = 0xF000_0000;
     pub const DRAM_END: u32 = 0xFFFF_FFFF;
     pub const DRAM_LEN: u32 = (Self::DRAM_END - Self::DRAM_START) + 1;

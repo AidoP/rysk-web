@@ -7,7 +7,7 @@ use wasm_bindgen::prelude::*;
 mod component;
 
 mod vm;
-use vm::{JsRegionRef, JsVmArgs, RegionRef, Vm};
+use vm::{JsRegionRef, JsVmArgs, MemoryRef, RegionRef, Vm};
 
 pub mod types {
     pub use rysk::Addressable;
@@ -31,8 +31,8 @@ impl RyskVm {
             .map(|v| RegionRef::to_js(v).into())
             .collect()
     }
-    pub fn get_memory(&mut self, address: u32) -> JsRegionRef {
-        self.hart.bus().memory(address).to_js().into()
+    pub fn get_memory(&mut self, address: u32) -> MemoryRef {
+        self.hart.bus().memory(address)
     }
     pub fn set_memory(&mut self, address: u32, data: &[u8]) {
         for (i, byte) in data.iter().enumerate() {

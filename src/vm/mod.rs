@@ -39,11 +39,20 @@ impl Vm {
 }
 
 #[wasm_bindgen]
-#[derive(Clone, Copy, Deserialize, Serialize)]
+#[derive(Clone, Copy, Deserialize)]
+#[repr(u32)]
 pub enum RegionType {
     Dram,
     None,
     Io,
+}
+impl Serialize for RegionType {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_u32(*self as u32)
+    }
 }
 #[wasm_bindgen]
 pub fn region_type_to_string(ty: RegionType) -> String {
@@ -60,17 +69,50 @@ impl std::fmt::Display for RegionType {
 }
 
 #[wasm_bindgen]
+pub struct MemoryRef {
+    pub ptr: *const u8,
+    pub len: u32,
+}
+impl MemoryRef {
+    pub const fn null() -> Self {
+        Self {
+            ptr: core::ptr::null(),
+            len: 0,
+        }
+    }
+    pub fn to_js(&self) -> JsValue {
+        serde_wasm_bindgen::to_value(&self).unwrap()
+    }
+}
+impl From<&[u8]> for MemoryRef {
+    fn from(value: &[u8]) -> Self {
+        Self {
+            ptr: value.as_ptr(),
+            len: value.len() as u32,
+        }
+    }
+}
+impl Serialize for MemoryRef {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let mut state = serializer.serialize_struct("Memory", 4)?;
+        state.serialize_field("ptr", &(self.ptr as usize))?;
+        state.serialize_field("len", &self.len)?;
+        state.end()
+    }
+}
+#[wasm_bindgen]
 pub struct RegionRef {
     pub ty: RegionType,
     pub address: u32,
-    pub ptr: *const u8,
     pub len: u32,
 }
 impl RegionRef {
     pub fn none(address: u32, len: u32) -> Self {
         Self {
             ty: RegionType::None,
-            ptr: core::ptr::null(),
             address,
             len,
         }
@@ -87,7 +129,6 @@ impl Serialize for RegionRef {
         let mut state = serializer.serialize_struct("RegionRef", 4)?;
         state.serialize_field("ty", &self.ty)?;
         state.serialize_field("address", &self.address)?;
-        state.serialize_field("ptr", &(self.ptr as usize))?;
         state.serialize_field("len", &self.len)?;
         state.end()
     }

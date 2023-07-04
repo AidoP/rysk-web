@@ -1,0 +1,13 @@
+{
+    "name": "Rysk",
+    "short_name": "Rysk",
+    "lang": "en",
+    "start_url": "https://rysk.trifuse.xyz",
+    "display": "standalone",
+    "icons": [
+        {
+            "src": "/icon.svg",
+            "sizes": "any"
+        }
+    ]
+}

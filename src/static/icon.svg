@@ -1,0 +1,15 @@
+<svg version="1.1" width="100" height="100" xmlns="http://www.w3.org/2000/svg" style="font-family: Noto Sans Mono;">
+    <style type="text/css">
+        @import url('/static/noto-sans-mono-latin-400-normal.woff2');
+        text {
+            font-size: 3.4rem;
+            fill: rgb(0 220 0);
+        }
+    </style>
+    <g class="monitor">
+        <rect x="5" y="5" rx="2" width="90" height="90" fill="beige" />
+        <rect x="10" y="10" rx="5" width="80" height="80" fill="black" />
+        <text x="50" y="50" text-anchor="middle" dominant-baseline="central">0x</text>
+    </g>
+     
+</svg>

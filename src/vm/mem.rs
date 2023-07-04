@@ -58,9 +58,15 @@ impl Memory {
     pub fn as_region(&mut self, address: u32) -> RegionRef {
         RegionRef {
             ty: super::RegionType::Dram,
-            ptr: self.as_ptr(),
             address,
             len: self.len,
+        }
+    }
+    pub fn as_region_spare(&mut self, address: u32, maximum_len: u32) -> RegionRef {
+        RegionRef {
+            ty: super::RegionType::None,
+            address: address + self.len,
+            len: maximum_len - self.len,
         }
     }
 }
