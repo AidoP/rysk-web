@@ -26,10 +26,14 @@ export class AsyncWorker<Type extends string | number, M extends Messages<Type>>
     next_id = 0;
     callbacks: Map<number, AsyncCallback<unknown>>;
 
-    constructor(url: string) {
+    constructor(url: string, hook: (response: unknown) => void) {
         super(url, { type: 'module' });
         this.onmessage = this.response;
         this.callbacks = new Map();
+        // Register a hook for the first response
+        this.callbacks.set(this.next_id++, { resolve: hook, reject: () => {
+            // nothing to do on failure
+        } });
     }
     async request<T extends Type>(type: T, request: M[T]['request']): Promise<M[T]['response']> {
         const id = this.next_id++;

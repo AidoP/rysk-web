@@ -15,7 +15,7 @@ const props = defineProps<{
 const emit = defineEmits<{
     (e: 'select', position?: [number, number]): void,
     (e: 'hover', position?: [number, number]): void,
-    (e: 'write', position: [number, number], value: number): void,
+    (e: 'write', position: [number, number], value: number): void
 }>();
 
 const cells: Ref<typeof ByteCell | null> = ref(null);
@@ -48,12 +48,13 @@ const cell_delete = ([x, y]: [number, number], left: boolean) => {
                 ref="cells"
                 :key="x+props.width*y"
                 :position="[x, y]"
+                :enabled="props.memory !== undefined && props.memory[x + props.width * y] !== undefined"
                 :focused="props.focused"
                 :selected="props.selected?.at(0) === x && props.selected?.at(1) === y"
                 :hovered="props.hovered?.at(0) === x && props.hovered?.at(1) === y"
                 :value="props.memory?.at(x+props.width*y)"
                 class="memory-cell byte"
-                :tabindex="(props.tabindex ?? 0) + y"
+                :tabindex="props.memory !== undefined && props.memory[x + props.width * y] !== undefined ? (props.tabindex ?? 0) + y : undefined"
                 @select="cell_select"
                 @hover="cell_hover"
                 @set="cell_set"

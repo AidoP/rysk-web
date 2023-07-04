@@ -4,6 +4,7 @@ import { computed, ref, Ref, watch } from 'vue';
 
 const props = defineProps<{
     value: number | undefined,
+    enabled: boolean,
     focused: boolean,
     selected: boolean,
     hovered: boolean,
@@ -22,7 +23,7 @@ const set = (value: number) => {
     emit('set', props.position, value);
 };
 watch(() => props.focused && props.selected, focused => {
-    if (focused) {
+    if (props.enabled && focused) {
         span.value?.focus();
     } else {
         span.value?.blur();
@@ -48,7 +49,7 @@ const on_blur = (_: Event) => {
 
 const hex_keys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
 const on_key_up = (event: KeyboardEvent) => {
-    if (!hex_keys.includes(event.key) || props.value === undefined) {
+    if (!props.enabled || !hex_keys.includes(event.key) || props.value === undefined) {
         return;
     }
     if (input_text.value === undefined || input_text.value.length >= 2) {
@@ -63,6 +64,8 @@ const on_key_up = (event: KeyboardEvent) => {
 };
 
 function on_key_down(event: KeyboardEvent) {
+    if (!props.enabled)
+        return;
     const [x, y] = props.position;
     switch (event.key) {
     case 'ArrowLeft':
@@ -101,6 +104,7 @@ defineExpose({
     <span
         ref="span"
         :class="{
+            disabled: !props.enabled,
             selected,
             hovered
         }"

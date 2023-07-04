@@ -18,7 +18,7 @@ const emit = defineEmits<{
 }>();
 
 watch(() => props.focused && props.selected, focused => {
-    if (focused) {
+    if (props.enabled && focused) {
         span.value?.focus();
     } else {
         span.value?.blur();
@@ -43,6 +43,8 @@ const on_blur = (_: Event) => {
 };
 
 const on_input = (e: Event) => {
+    if (!props.enabled)
+        return;
     const event = e as InputEvent;
     switch (event.inputType) {
     case 'insertCompositionText':
@@ -84,6 +86,8 @@ const on_input = (e: Event) => {
 };
 
 function on_key_down(event: KeyboardEvent) {
+    if (!props.enabled)
+        return;
     const [x, y] = props.position;
     switch (event.key) {
     case 'ArrowLeft':
@@ -128,9 +132,9 @@ defineExpose({
             hovered: props.hovered
         }"
         :contenteditable="props.enabled ? true : undefined"
-        :tooltip="props.value !== null && props.value !== undefined ? 'U+' + to_hex(props.value, 4).toUpperCase() : undefined"
-        @click="emit('select', props.position)"
-        @focus="emit('select', props.position)"
+        :tooltip="props.enabled && props.value !== null && props.value !== undefined ? 'U+' + to_hex(props.value, 4).toUpperCase() : undefined"
+        @click="props.enabled && emit('select', props.position)"
+        @focus="props.enabled && emit('select', props.position)"
         @blur="on_blur"
         @input="on_input"
         @keydown="on_key_down"
